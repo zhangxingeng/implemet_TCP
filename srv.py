@@ -13,7 +13,7 @@ while(True):
     print("essage from Client:{}".format( binder[0]))
     print("Client IP Address:{}".format(binder[1]))
     # respond
-    udp_sock.sendto(str.encode("Hello UDP Client"), binder[1])
+    udp_sock.sendto(binder[0], binder[1])
     
     
     
