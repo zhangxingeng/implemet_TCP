@@ -48,6 +48,11 @@ class Tcp_pack:
     def get_ck_sum(self):
         return self.ck_sum        
     
+    def set_msg(self, msg=''):
+        self.msg = msg
+    def get_msg(self):
+        return self.msg
+    
     '''convert a pack to hex string'''
     def pack_to_str(self):
         header = '{0:04x}{1:04x}{2:08x}{3:08x}{4:04x}{5:04x}{6:04x}{7:04x}'\
@@ -83,8 +88,8 @@ class Tcp_pack:
         tokens.append(header[28:32])
         tokens.append(header[32:36])
         tokens.append(header[36:40])
-        print(recv_msg)
-        print(tokens)
+        #print(recv_msg)
+        #print(tokens)
         self.__init__([int(i, base=16) for i in tokens])
         return recv[1]
     
