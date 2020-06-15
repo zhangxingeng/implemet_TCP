@@ -1,6 +1,5 @@
 import socket
 import numpy as np
-np.seterr(over='ignore')
 
 
 class Tcp_pack:
@@ -52,6 +51,8 @@ class Tcp_pack:
         self.msg = msg
     def get_msg(self):
         return self.msg
+    def get_msg_len(self):
+        return len(self.msg)
     
     '''convert a pack to hex string'''
     def pack_to_str(self):
@@ -71,28 +72,35 @@ class Tcp_pack:
 
     '''send a packet to addr_port via sock'''
     def send_pack(self, sock, addr_port):
-        sock.sendto(self.pack_to_str().encode(), addr_port)         
+        try:
+            sock.sendto(self.pack_to_str().encode(), addr_port)
+        except:
+            raise Exception("send_fail")         
     
     '''initialize header and return msg'''    
     def recv_pack(self, sock):
-        recv = sock.recvfrom(1024)
-        recv_msg = recv[0].decode()
-        header = recv_msg[:40]
-        self.msg = recv_msg[40:]
-        tokens = []
-        tokens.append(header[0:4])
-        tokens.append(header[4:8])
-        tokens.append(header[8:16])
-        tokens.append(header[16:24])
-        tokens.append(header[24:28])
-        tokens.append(header[28:32])
-        tokens.append(header[32:36])
-        tokens.append(header[36:40])
-        #print(recv_msg)
-        #print(tokens)
-        self.__init__([int(i, base=16) for i in tokens])
-        return recv[1]
-    
+        try:
+            recv = sock.recvfrom(1024)
+            recv_msg = recv[0].decode()
+            header = recv_msg[:40]
+            self.msg = recv_msg[40:]
+            tokens = []
+            tokens.append(header[0:4])
+            tokens.append(header[4:8])
+            tokens.append(header[8:16])
+            tokens.append(header[16:24])
+            tokens.append(header[24:28])
+            tokens.append(header[28:32])
+            tokens.append(header[32:36])
+            tokens.append(header[36:40])
+            #print(recv_msg)
+            #print(tokens)
+            self.__init__([int(i, base=16) for i in tokens])
+            return recv[1]
+        except:
+            raise Exception("recv_fail")
+            return None
+        
     def print_pack(self):
         print("from_port: {} to_port: {}".format(self.src_port, self.dest_port))
         print("seq_num: {} ack_num: {}".format(self.seq_num, self.ack_num))
